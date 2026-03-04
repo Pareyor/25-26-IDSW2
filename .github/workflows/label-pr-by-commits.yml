@@ -20,8 +20,7 @@ jobs:
         with:
           script: |
             // ── Configuración ──────────────────────────────────────
-            const DEADLINE      = new Date('2026-03-05T14:15:00+01:00');
-            const HARD_DEADLINE = new Date('2026-03-05T23:59:59+01:00');
+            const DEADLINE = new Date('2026-03-08T00:00:00+01:00');
             const REQUIRED_BRANCH = 'reto-002';
             const ALLOWED_PATHS = /^entregas\/[^/]+\/(README\.md|docs\/legibilidad\.md)$/;
             const STUDENT_ROOT  = /^entregas\/([^/]+)\//;
@@ -36,7 +35,6 @@ jobs:
 
             const filePaths = files.map(f => f.filename);
             const errors = [];
-            const warnings = [];
 
             // ── 1. Rama destino ────────────────────────────────────
             const base = context.payload.pull_request.base.ref;
@@ -79,49 +77,37 @@ jobs:
 
             // ── 4. Plazo ───────────────────────────────────────────
             const now = new Date();
-            let deadlineLabel = '';
 
-            if (now > HARD_DEADLINE) {
-              errors.push('Entrega posterior al límite absoluto (5 mar 23:59:59 CET).');
-              deadlineLabel = 'fuera-de-plazo';
-            } else if (now > DEADLINE) {
-              warnings.push('Entrega fuera de plazo (posterior a 14:15 CET). Se acepta con penalización.');
-              deadlineLabel = 'fuera-de-plazo';
+            if (now > DEADLINE) {
+              errors.push('Entrega fuera de plazo (límite: 8 mar 00:00 CET).');
             }
 
             // ── Etiquetas ──────────────────────────────────────────
-            const labelsToAdd = [];
-            if (deadlineLabel) labelsToAdd.push(deadlineLabel);
-            if (errors.length > 0) labelsToAdd.push('entrega-incorrecta');
-
-            if (labelsToAdd.length > 0) {
+            if (errors.length > 0) {
               try {
                 await github.rest.issues.addLabels({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: context.issue.number,
-                  labels: labelsToAdd
+                  labels: ['entrega-incorrecta']
                 });
               } catch (e) {
                 console.log(`No se pudo añadir etiqueta: ${e.message}`);
               }
             }
 
-            // Retirar etiquetas que ya no aplican
+            // Retirar etiqueta si ya no aplica
             const currentLabels = context.payload.pull_request.labels.map(l => l.name);
-            const labelsToRemove = ['entrega-incorrecta', 'fuera-de-plazo']
-              .filter(l => currentLabels.includes(l) && !labelsToAdd.includes(l));
-
-            for (const label of labelsToRemove) {
+            if (errors.length === 0 && currentLabels.includes('entrega-incorrecta')) {
               try {
                 await github.rest.issues.removeLabel({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: context.issue.number,
-                  name: label
+                  name: 'entrega-incorrecta'
                 });
               } catch (e) {
-                console.log(`No se pudo retirar etiqueta ${label}: ${e.message}`);
+                console.log(`No se pudo retirar etiqueta: ${e.message}`);
               }
             }
 
@@ -130,17 +116,11 @@ jobs:
             let body = `## Validación de entrega — Reto 002\n\n`;
             body += `**Alumno:** \`${student}\` | **Archivos:** ${filePaths.length}\n\n`;
 
-            if (errors.length === 0 && warnings.length === 0) {
+            if (errors.length === 0) {
               body += `✅ Entrega válida y dentro de plazo.\n`;
             } else {
-              if (errors.length > 0) {
-                body += `### ❌ Errores (bloquean el merge)\n\n`;
-                body += errors.map(e => `- ${e}`).join('\n') + '\n\n';
-              }
-              if (warnings.length > 0) {
-                body += `### ⚠️ Avisos\n\n`;
-                body += warnings.map(w => `- ${w}`).join('\n') + '\n';
-              }
+              body += `### ❌ Errores (bloquean el merge)\n\n`;
+              body += errors.map(e => `- ${e}`).join('\n') + '\n';
             }
 
             // Actualizar o crear comentario

@@ -22,8 +22,8 @@ Ver cómo en la distancia entre "sé lo que hace" y "se lee lo que hace" es dond
 A partir del documento de [legibilidad](legibilidad.md), se pide:
 
 - Por cada sección
-  - Dos ejemplos de aplicación correcta (uno en las secciones Código muerto, DRY y YAGNI).
-  - Dos ejemplos de aplicación incorrecta.
+  - Un ejemplo de aplicación correcta.
+  - Dos ejemplos de aplicación incorrecta (uno en las secciones Código muerto, DRY y YAGNI).
   - Un argumento por cada ejemplo, que justifique por qué dicha clasificación. Cada argumento debe referenciar explícitamente un principio del documento de legibilidad y comentar el efecto concreto en mantenibilidad.
   - La corrección -sobre su propio repositorio- de los ejemplos incorrectos.
 - Añada una sección final breve — 3-5 líneas — donde indique en cuál de las 8 categorías le resultó más difícil de encontrar en su propio código y por qué.
@@ -39,31 +39,23 @@ A partir del documento de [legibilidad](legibilidad.md), se pide:
 |Categoría||Justificación||
 |-|-|-|-|
 |**Nombrado**|Ejemplo +|
-||Ejemplo +|
 ||Ejemplo -||PR corrección
 ||Ejemplo -||PR corrección
 |**Comentarios**|Ejemplo +|
-||Ejemplo +|
 ||Ejemplo -||PR corrección
 ||Ejemplo -||PR corrección
 |**Formato**|Ejemplo +|
-||Ejemplo +|
 ||Ejemplo -||PR corrección
 ||Ejemplo -||PR corrección
 |**Estándares**|Ejemplo +|
-||Ejemplo +|
 ||Ejemplo -||PR corrección
 ||Ejemplo -||PR corrección
 |**Consistencia**|Ejemplo +|
-||Ejemplo +|
 ||Ejemplo -||PR corrección
 ||Ejemplo -||PR corrección
 |**Código muerto**|Ejemplo +|
 ||Ejemplo -||PR corrección
-||Ejemplo -||PR corrección
 |**DRY**|Ejemplo +|
 ||Ejemplo -||PR corrección
-||Ejemplo -||PR corrección
 |**YAGNI**|Ejemplo +|
-||Ejemplo -||PR corrección
 ||Ejemplo -||PR corrección
